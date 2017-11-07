@@ -7,18 +7,27 @@ A TYPO3 environment
 .. default-role:: code
 
 
-Install for development
-=======================
+How to install for development
+==============================
 
-#. :code:`docker-compose up -d`
+#. Clone or download the repository to `./docker-typo3`. Go there::
 
-#. `docker-compose exec typo3 touch /app/web/FIRST_INSTALL`
+      cd ./docker-typo3
 
-#. Add `web.typo3` as a hosts entry for localhost or the box you're running docker on
+#. Build and start the containers::
+
+      docker-compose up -d
+
+#. Create the `FIRST_INSTALL` file for TYPO3::
+
+      docker-compose exec typo3 touch /app/web/FIRST_INSTALL
+
+#. Make sure the domain `web.typo3` resolves to 127.0.0.1 (localhost) on your host machine
+   where you have your Docker running.
 
 #. Setup TYPO3
 
-   #. With TYPO3 Console::
+   -  With TYPO3 Console::
 
          docker-compose exec typo3 \
             /app/vendor/bin/typo3cms install:setup \
@@ -35,61 +44,177 @@ Install for development
             --site-name="TYPO3 Demo"
 
 
-   #. Or in the browser::
-
-         docker-compose exec typo3 touch /app/web/FIRST_INSTALL
-         # open http://web.typo3/typo3/
+   -  Or in the browser the tradional way at http://web.typo3/typo3/
 
 #. Go to http://web.typo3/ for the TYPO3 frontend
 
-#. Go to http://web.typo3/typo3/ for the TYPO3 backend with user 'admin' and password
-   'password'
+#. Go to http://web.typo3/typo3/ for the TYPO3 backend. Use 'admin' as user and 'password'
+   as password.
 
 
-Install again for development
-=============================
+How to install AGAIN for development
+====================================
 
-You may want to do some inspections first.
+Before you destroy an existing build you may want to do some inspections first. You
+would do so if you want to remove and destroy the data volumes as well. The inspection
+helps finding their names.
+
 
 Inspect
 -------
 
-Here are some examples. Your values may be different::
+Here are some command examples. Values may be different for your instances.
 
-   # find names of running containers
+Inspect the images
+~~~~~~~~~~~~~~~~~~
+
+Command:
+
+   Here we find the *container names* for later use::
+
+      # List images used by the created containers.
+      docker-compose images
+
+Result:
+
+   .. figure:: Documentation/Images/001-docker-compose-images.png
+      :class: with-shadow
+
+
+Command:
+
+   For your interest::
+
+      # list the images and only show the IDs
+      docker-compose images -q
+
+Result:
+
+   .. figure:: Documentation/Images/002-docker-compose-images-ids-only.png
+      :class: with-shadow
+
+Command:
+
+   For your interest::
+
+      # print a long json text with all the knowledge
+      docker-compose images -q | xargs docker inspect
+
+
+Inspect the containers
+~~~~~~~~~~~~~~~~~~~~~~
+
+#. Go to the root folder::
+
+      cd docker-typo3
+
+#. Make sure the containers exist::
+
+      # build, (re)create, start, and attach to containers for a service
+      # run as daemon
+      docker-compose up -d
+
+      # list what's running
+      docker ps
+
+
+#. The containers need not be running for the next step::
+
+      # Stop one or more running containers
+      docker-compose stop
+
+
+#. Inspect the containers showing the complete json::
+
+      docker inspect dockertypo3_db_1
+      docker inspect dockertypo3_typo3_1
+      docker inspect dockertypo3_web_1
+
+
+#. Specificly find out what VOLUMES are used::
+
+      docker inspect dockertypo3_db_1 \
+         --format='Container "{{.Name}}" uses volume(s):{{range .Mounts}} "{{ .Name }}"{{end}}'
+
+      docker inspect dockertypo3_typo3_1 \
+         --format='Container "{{.Name}}" uses volume(s):{{range .Mounts}} "{{ .Name }}"{{end}}'
+
+      docker inspect dockertypo3_web_1 \
+         --format='Container "{{.Name}}" uses volume(s):{{range .Mounts}} "{{ .Name }}"{{end}}'
+
+
+   Result:
+
+   .. figure:: Documentation/Images/003-inspect-containers-for-volumes.png
+      :class: with-shadow
+
+
+Understand
+----------
+
+Compare the results of the inspection with your system::
+
+   # list images
+   docker images
+
+   # list running containers
+   docker container
+
+   # or   list running containers
    docker ps
 
-   # inspect a container
-   docker inspect dockertypo3_web_1
+   # list all containers
+   docker container -a
 
-   # find out what valumes are used
-   docker inspect --format='{{json .Mounts}}' dockertypo3_db_1
-   docker inspect --format='{{json .Mounts}}' dockertypo3_typo3_1
-   docker inspect --format='{{json .Mounts}}' dockertypo3_web_1
+   # or  list all containers
+   docker ps -a
+
+   # list networks
+   docker network ls
+
+   # list volumes
+   docker volume ls
+
 
 Destroy
 -------
 
-::
+#. Go to the root folder::
 
-   # Stop containers and remove containers, networks, images
-   # and ((maybe)) volumes created by `up`:
-   docker-compose down
+      cd docker-typo3
 
-   # List volumes:
-   docker volume ls
+#. Remove the images, containers and networks::
 
-   # Easy but dangerous: Remove ALL unused volumes:
-   docker volume prune
+      # Stop containers and remove containers, networks, images
+      # and volumes (?) created by `up`:
+      docker-compose down
 
-   # Safer: Remove only specific volumes:
-   docker volume rm dockertypo3_db
-   docker volume rm dockertypo3_typo3
+#. Verify that the volumes still exist::
+
+      # list volumes:
+      docker volume ls
+
+
+#. Decide whether you want to remove the volumes as well.
+
+   Method 1::
+
+      # Easy but dangerous: Remove ALL unused volumes from your system
+      docker volume prune
+
+
+   Method 2::
+
+      # Only and explicitely remove our named volumens
+      docker volume rm dockertypo3_db
+      docker volume rm dockertypo3_typo3
+
+
 
 Install again
 -------------
 
-Start all over with `Install for development`_.
+Start all over with `How to install for development`_.
 
 
 
