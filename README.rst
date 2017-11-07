@@ -209,7 +209,7 @@ Destroy
 
    Method 2::
 
-      # Only and explicitely remove our named volumens
+      # Remove only and explicitely our named volumes
       docker volume rm dockertypo3_db
       docker volume rm dockertypo3_typo3
 
