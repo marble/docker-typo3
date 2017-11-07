@@ -4,6 +4,7 @@ A TYPO3 environment
 ===================
 
 .. highlight:: shell
+.. default-role:: code
 
 
 Install for development
