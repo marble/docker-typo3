@@ -9,7 +9,7 @@ A TYPO3 environment
 Install for development
 =======================
 
-#. `docker-compose up -d`
+#. :code:`docker-compose up -d`
 
 #. `docker-compose exec typo3 touch /app/web/FIRST_INSTALL`
 
@@ -69,6 +69,8 @@ Here are some examples. Your values may be different::
 Destroy
 -------
 
+::
+
    # Stop containers and remove containers, networks, images
    # and ((maybe)) volumes created by `up`:
    docker-compose down
@@ -95,5 +97,5 @@ Build and run
 
 #. `docker-compose -f docker-compose.yml -f docker-compose.build.yml build --no-cache`
 
-#.  `docker-compose up -d`
+#. `docker-compose up -d`
 
