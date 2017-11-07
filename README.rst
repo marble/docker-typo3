@@ -1,24 +1,99 @@
-# A TYPO3 environment
 
-For testing:
-1.  `docker-compose up -d`
-1.  `docker-compose exec typo3 touch /app/web/FIRST_INSTALL`
-1.  Add `web.typo3` as a hosts entry for localhost / the box you're running docker on
-1.  Setup TYPO3
-    1.  With TYPO3 Console  
-        ```bash
-        docker-compose exec typo3 /app/vendor/bin/typo3cms install:setup --non-interactive \
-            --database-name="typo3" --database-user-name="typo3" --database-user-password="typo3" --database-host-name="db" --database-port="3306" --use-existing-database \
-            --admin-user-name="admin" --admin-password="password" --site-setup-type="site" --site-name="TYPO3 Demo"
-        ```
-    1.  Or in the browser  
-        `docker-compose exec typo3 touch /app/web/FIRST_INSTALL`  
-        <http://web.typo3/typo3/>
-1.  Go to <http://web.typo3/> for the frontend and <http://web.typo3/typo3/> for the TYPO3 backend
-1.  Log in with user `admin` and password `password` (or your setup credentials)
+===================
+A TYPO3 environment
+===================
+
+.. highlight:: shell
 
 
-## Build and run:
+Install for development
+=======================
 
-1.  `docker-compose -f docker-compose.yml -f docker-compose.build.yml build --no-cache`
-1.  `docker-compose up -d`
+#. `docker-compose up -d`
+
+#. `docker-compose exec typo3 touch /app/web/FIRST_INSTALL`
+
+#. Add `web.typo3` as a hosts entry for localhost or the box you're running docker on
+
+#. Setup TYPO3
+
+   #. With TYPO3 Console::
+
+         docker-compose exec typo3 \
+            /app/vendor/bin/typo3cms install:setup \
+            --non-interactive \
+            --database-name="typo3" \
+            --database-user-name="typo3" \
+            --database-user-password="typo3" \
+            --database-host-name="db" \
+            --database-port="3306" \
+            --use-existing-database \
+            --admin-user-name="admin" \
+            --admin-password="password" \
+            --site-setup-type="site" \
+            --site-name="TYPO3 Demo"
+
+
+   #. Or in the browser::
+
+         docker-compose exec typo3 touch /app/web/FIRST_INSTALL
+         # open http://web.typo3/typo3/
+
+#. Go to http://web.typo3/ for the TYPO3 frontend
+
+#. Go to http://web.typo3/typo3/ for the TYPO3 backend with user 'admin' and password
+   'password'
+
+
+Install again for development
+=============================
+
+You may want to do some inspections first.
+
+Inspect
+-------
+
+Here are some examples. Your values may be different::
+
+   # find names of running containers
+   docker ps
+
+   # inspect a container
+   docker inspect dockertypo3_web_1
+
+   # find out what valumes are used
+   docker inspect --format='{{json .Mounts}}' dockertypo3_db_1
+   docker inspect --format='{{json .Mounts}}' dockertypo3_typo3_1
+   docker inspect --format='{{json .Mounts}}' dockertypo3_web_1
+
+Destroy
+-------
+
+   # Stop containers and remove containers, networks, images
+   # and ((maybe)) volumes created by `up`:
+   docker-compose down
+
+   # List volumes:
+   docker volume ls
+
+   # Easy but dangerous: Remove ALL unused volumes:
+   docker volume prune
+
+   # Safer: Remove only specific volumes:
+   docker volume rm dockertypo3_db
+   docker volume rm dockertypo3_typo3
+
+Install again
+-------------
+
+Start all over with `Install for development`_.
+
+
+
+Build and run
+=============
+
+#. `docker-compose -f docker-compose.yml -f docker-compose.build.yml build --no-cache`
+
+#.  `docker-compose up -d`
+
