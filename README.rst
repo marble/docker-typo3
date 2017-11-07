@@ -70,35 +70,39 @@ Inspect the images
 
 Command:
 
-   Here we find the *container names* for later use::
+Here we find the *container names* for later use::
 
-      # List images used by the created containers.
-      docker-compose images
+   # List images used by the created containers.
+   docker-compose images
 
 Result:
 
-   .. figure:: Documentation/Images/001-docker-compose-images.png
-      :class: with-shadow
+.. figure:: Documentation/Images/001-docker-compose-images.png
+   :class: with-shadow
 
 
 Command:
 
-   For your interest::
+For your interest::
 
-      # list the images and only show the IDs
-      docker-compose images -q
+   # list the images and only show the IDs
+   docker-compose images -q
 
 Result:
 
-   .. figure:: Documentation/Images/002-docker-compose-images-ids-only.png
-      :class: with-shadow
+.. figure:: Documentation/Images/002-docker-compose-images-ids-only.png
+   :class: with-shadow
 
 Command:
 
-   For your interest::
+For your interest::
 
-      # print a long json text with all the knowledge
-      docker-compose images -q | xargs docker inspect
+   # print a long json text with all the knowledge
+   docker-compose images -q | xargs docker inspect
+
+Result:
+
+... will print a long json text
 
 
 Inspect the containers
